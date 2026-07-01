@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đào tạo Vận hành máy Đánh phá đống (S/R) & Quản lý Kho than — PVPGB</title>
+<style>
+:root{
+  --navy:#0A2A4A;
+  --navy-deep:#061a2e;
+  --navy-2:#0d3358;
+  --navy-3:#123f6b;
+  --blue:#0083C7;
+  --blue-light:#4fc3ff;
+  --green:#00B050;
+  --green-light:#5be08c;
+  --ink:#eaf3fb;
+  --muted:#9db7cf;
+  --muted-2:#729ac2;
+  --white:#ffffff;
+  --card-bg:rgba(255,255,255,0.055);
+  --card-bd:rgba(255,255,255,0.11);
+  --nav-w:264px;
+  --fs-eyebrow:clamp(.72rem,1vw + .3rem,.95rem);
+  --fs-h1:clamp(2.1rem,1.1rem + 3.4vw,4.1rem);
+  --fs-h2:clamp(1.55rem,1rem + 1.9vw,2.55rem);
+  --fs-h3:clamp(1.1rem,.9rem + .8vw,1.5rem);
+  --fs-lead:clamp(1rem,.85rem + .5vw,1.25rem);
+  --fs-body:clamp(.92rem,.85rem + .2vw,1.05rem);
+  --fs-small:clamp(.78rem,.72rem + .15vw,.9rem);
+  --fs-stat:clamp(1.9rem,1rem + 3vw,3.4rem);
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:'Be Vietnam Pro','Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--navy-deep);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,.font-display{
+  font-family:'Sora','Be Vietnam Pro',system-ui,-apple-system,sans-serif;
+}
+::selection{background:var(--green);color:var(--navy-deep);}
+
+/* ---------- scroll container ---------- */
+#deck{
+  height:100dvh;
+  overflow-y:scroll;
+  overflow-x:hidden;
+  scroll-snap-type:y proximity;
+}
+.slide{
+  position:relative;
+  min-height:100dvh;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  scroll-snap-align:start;
+  padding:clamp(80px,6vh,120px) clamp(24px,4vw,72px) clamp(48px,5vh,80px) calc(var(--nav-w) + clamp(24px,4vw,64px));
+  overflow:hidden;
+  isolation:isolate;
+}
+@media (max-width:860px){
+  .slide{ padding-left:clamp(20px,5vw,40px); }
+}
+
+/* ---------- background system (Ken Burns + orbs) ---------- */
+.bg-photo{
+  position:absolute; inset:-6%;
+  z-index:-3;
+  background-size:cover;
+  animation:kenburns 26s ease-in-out infinite alternate;
+  opacity:.9;
+}
+@keyframes kenburns{
+  0%{ transform:scale(1.02) translate3d(0,0,0); }
+  100%{ transform:scale(1.16) translate3d(-2.5%,-2%,0); }
+}
+.bg-grad-a{ background:
+  radial-gradient(120% 90% at 15% 10%, rgba(0,131,199,.35), transparent 60%),
+  radial-gradient(90% 70% at 85% 85%, rgba(0,176,80,.28), transparent 60%),
+  linear-gradient(160deg,#050f1c 0%, #0A2A4A 55%, #0d3358 100%);
+}
+.bg-grad-b{ background:
+  radial-gradient(100% 80% at 85% 15%, rgba(0,176,80,.32), transparent 62%),
+  radial-gradient(90% 70% at 10% 90%, rgba(0,131,199,.34), transparent 60%),
+  linear-gradient(200deg,#040c17 0%, #0A2A4A 50%, #103a63 100%);
+}
+.bg-grad-c{ background:
+  radial-gradient(90% 70% at 50% 0%, rgba(0,131,199,.30), transparent 65%),
+  radial-gradient(100% 80% at 100% 100%, rgba(0,176,80,.24), transparent 60%),
+  linear-gradient(180deg,#03090f 0%, #0A2A4A 60%, #0a2f52 100%);
+}
+.bg-grid{
+  position:absolute; inset:0; z-index:-2;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(120% 100% at 50% 30%, #000 40%, transparent 85%);
+  opacity:.5;
+}
+.orb{ position:absolute; z-index:-1; border-radius:50%; filter:blur(60px); pointer-events:none; }
+.orb-blue{ background:radial-gradient(circle, rgba(0,131,199,.55), transparent 70%); }
+.orb-green{ background:radial-gradient(circle, rgba(0,176,80,.5), transparent 70%); }
+.orb1{ width:420px;height:420px; top:-10%; right:-8%; animation:float1 16s ease-in-out infinite; }
+.orb2{ width:340px;height:340px; bottom:-12%; left:-6%; animation:float2 19s ease-in-out infinite; }
+.orb3{ width:260px;height:260px; top:40%; left:60%; animation:float1 22s ease-in-out infinite reverse; }
+@keyframes float1{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-24px,26px) scale(1.08);} }
+@keyframes float2{ 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(22px,-20px) scale(1.06);} }
+
+/* ---------- typography blocks ---------- */
+.kicker{
+  display:inline-flex; align-items:center; gap:.5em;
+  font-size:var(--fs-eyebrow); letter-spacing:.16em; text-transform:uppercase;
+  color:var(--green-light); font-weight:600; margin-bottom:14px;
+}
+.kicker::before{ content:""; width:26px; height:2px; background:var(--green); display:inline-block; }
+.slide-index{
+  position:absolute; top:clamp(20px,4vh,40px); right:clamp(20px,4vw,56px);
+  font-family:'Sora',sans-serif; font-size:var(--fs-small); color:var(--muted-2); letter-spacing:.08em;
+}
+h1.h1{ font-size:var(--fs-h1); line-height:1.05; font-weight:700; margin:0 0 18px; color:var(--white); }
+h2.h2{ font-size:var(--fs-h2); line-height:1.12; font-weight:700; margin:0 0 14px; color:var(--white); }
+h3.h3{ font-size:var(--fs-h3); font-weight:650; margin:0 0 8px; color:var(--white); }
+p.lead{ font-size:var(--fs-lead); color:var(--muted); max-width:64ch; line-height:1.55; margin:0 0 8px; }
+p.body, li.body{ font-size:var(--fs-body); color:var(--ink); line-height:1.6; }
+.muted{ color:var(--muted); }
+.accent-blue{ color:var(--blue-light); }
+.accent-green{ color:var(--green-light); }
+
+/* ---------- reveal animation ---------- */
+.reveal{ opacity:0; transform:translateY(26px); transition:opacity .7s cubic-bezier(.16,.8,.24,1), transform .7s cubic-bezier(.16,.8,.24,1); }
+.reveal.in-view{ opacity:1; transform:translateY(0); }
+.r-d1{ transition-delay:.05s; } .r-d2{ transition-delay:.14s; } .r-d3{ transition-delay:.22s; }
+.r-d4{ transition-delay:.30s; } .r-d5{ transition-delay:.38s; } .r-d6{ transition-delay:.46s; }
+
+/* ---------- layout helpers ---------- */
+.content-wrap{ max-width:1180px; }
+.grid{ display:grid; gap:16px; }
+.grid-2{ grid-template-columns:repeat(2,1fr); }
+.grid-3{ grid-template-columns:repeat(3,1fr); }
+.grid-4{ grid-template-columns:repeat(4,1fr); }
+@media (max-width:900px){ .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; } }
+
+.card{
+  background:var(--card-bg); border:1px solid var(--card-bd); border-radius:16px;
+  padding:20px 22px; backdrop-filter:blur(6px);
+  transition:transform .3s ease, border-color .3s ease, background .3s ease;
+}
+.card:hover{ transform:translateY(-3px); border-color:rgba(0,131,199,.5); background:rgba(255,255,255,.08); }
+.card .card-num{ font-family:'Sora',sans-serif; font-weight:700; color:var(--green-light); font-size:1.5rem; opacity:.85; }
+.card ul{ margin:8px 0 0; padding-left:20px; }
+.card li{ margin-bottom:6px; }
+
+.tag{
+  display:inline-block; font-size:var(--fs-small); font-weight:600; letter-spacing:.03em;
+  padding:4px 12px; border-radius:999px; border:1px solid rgba(0,131,199,.5);
+  color:var(--blue-light); background:rgba(0,131,199,.12); margin:2px 6px 2px 0;
+}
+.tag.green{ border-color:rgba(0,176,80,.55); color:var(--green-light); background:rgba(0,176,80,.12); }
+
+.stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+.stat{ background:linear-gradient(160deg, rgba(0,131,199,.14), rgba(0,176,80,.08)); border:1px solid var(--card-bd); border-radius:16px; padding:18px 18px 14px; }
+.stat .num{ font-family:'Sora',sans-serif; font-weight:700; font-size:var(--fs-stat); color:var(--white); line-height:1; }
+.stat .num span.unit{ font-size:.4em; color:var(--blue-light); margin-left:4px; font-weight:600; }
+.stat .lbl{ margin-top:8px; font-size:var(--fs-small); color:var(--muted); line-height:1.4; }
+
+.table-card{ background:var(--card-bg); border:1px solid var(--card-bd); border-radius:16px; padding:6px; overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; font-size:var(--fs-small); min-width:480px; }
+thead th{ text-align:left; font-family:'Sora',sans-serif; color:var(--green-light); font-weight:650; padding:12px 14px; border-bottom:2px solid rgba(0,176,80,.4); white-space:nowrap; }
+tbody td{ padding:10px 14px; border-bottom:1px solid rgba(255,255,255,.08); color:var(--ink); vertical-align:top; }
+tbody tr:hover{ background:rgba(0,131,199,.08); }
+tbody tr:last-child td{ border-bottom:none; }
+
+.steps{ counter-reset:step; list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+.steps li{ counter-increment:step; position:relative; padding-left:44px; font-size:var(--fs-body); color:var(--ink); line-height:1.55; }
+.steps li::before{
+  content:counter(step); position:absolute; left:0; top:0; width:30px; height:30px; border-radius:9px;
+  background:linear-gradient(135deg,var(--blue),var(--green)); color:#fff; font-weight:700; font-family:'Sora',sans-serif;
+  display:flex; align-items:center; justify-content:center; font-size:.85rem;
+}
+
+.warn-card{ border-left:3px solid var(--green); background:rgba(0,176,80,.08); border-radius:0 14px 14px 0; padding:16px 20px; }
+.ban-card{ border-left:3px solid var(--blue); background:rgba(0,131,199,.08); border-radius:0 14px 14px 0; padding:16px 20px; }
+.ban-card ul, .warn-card ul{ margin:6px 0 0; padding-left:20px; }
+.ban-card li, .warn-card li{ margin-bottom:6px; font-size:var(--fs-body); }
+
+.footer-brand{
+  position:absolute; bottom:clamp(18px,3vh,28px); left:calc(var(--nav-w) + clamp(24px,4vw,64px));
+  font-size:var(--fs-small); color:var(--muted-2); letter-spacing:.05em; display:flex; gap:10px; align-items:center;
+}
+.footer-brand .dot{ width:6px;height:6px;border-radius:50%; background:var(--green); }
+@media (max-width:860px){ .footer-brand{ left:20px; } }
+
+.pill-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; }
+.center-mid{ display:flex; flex-direction:column; justify-content:center; align-items:flex-start; height:100%; }
+
+/* ---------- title slide ---------- */
+#slide-cover{ padding-left:calc(var(--nav-w) + clamp(24px,4vw,64px)); align-items:flex-start; }
+.cover-badge{
+  display:inline-flex; align-items:center; gap:10px; padding:8px 16px; border-radius:999px;
+  background:rgba(255,255,255,.06); border:1px solid var(--card-bd); font-size:var(--fs-small); color:var(--muted); margin-bottom:26px;
+}
+.cover-badge b{ color:var(--green-light); }
+.cover-code{ font-family:'Sora',sans-serif; font-size:var(--fs-small); color:var(--muted-2); letter-spacing:.12em; margin-top:22px; }
+.cover-meta{ display:flex; gap:28px; flex-wrap:wrap; margin-top:36px; }
+.cover-meta div{ font-size:var(--fs-small); color:var(--muted); }
+.cover-meta b{ display:block; color:var(--white); font-family:'Sora',sans-serif; font-size:1rem; margin-bottom:2px; }
+
+/* ---------- side nav ---------- */
+#sidenav{
+  position:fixed; top:0; left:0; height:100dvh; width:var(--nav-w);
+  background:linear-gradient(180deg, rgba(5,15,28,.97), rgba(10,42,74,.97));
+  border-right:1px solid rgba(255,255,255,.08);
+  z-index:50; display:flex; flex-direction:column;
+  padding:26px 0 18px;
+}
+#sidenav .nav-head{ padding:0 22px 18px; border-bottom:1px solid rgba(255,255,255,.08); margin-bottom:8px; }
+#sidenav .nav-head .logo{ font-family:'Sora',sans-serif; font-weight:800; letter-spacing:.06em; font-size:1.05rem; color:#fff; }
+#sidenav .nav-head .logo span{ color:var(--green-light); }
+#sidenav .nav-head .sub{ font-size:.72rem; color:var(--muted-2); margin-top:4px; letter-spacing:.04em; }
+#navlist{ list-style:none; margin:0; padding:6px 10px; overflow-y:auto; flex:1; scrollbar-width:thin; scrollbar-color:var(--blue) transparent; }
+#navlist::-webkit-scrollbar{ width:5px; }
+#navlist::-webkit-scrollbar-thumb{ background:rgba(0,131,199,.5); border-radius:4px; }
+#navlist a{
+  display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--muted);
+  font-size:.82rem; line-height:1.3; padding:8px 12px; border-radius:9px; margin-bottom:2px;
+  transition:all .25s ease; border-left:2px solid transparent;
+}
+#navlist a .n{ font-family:'Sora',sans-serif; font-weight:700; font-size:.72rem; color:var(--muted-2); min-width:20px; }
+#navlist a:hover{ background:rgba(255,255,255,.05); color:var(--ink); }
+#navlist a.active{ background:rgba(0,131,199,.16); color:#fff; border-left:2px solid var(--green); }
+#navlist a.active .n{ color:var(--green-light); }
+#navlist .group-label{ font-size:.66rem; text-transform:uppercase; letter-spacing:.12em; color:var(--muted-2); padding:14px 12px 4px; }
+#progress{ height:3px; background:rgba(255,255,255,.08); margin:0 22px 0; border-radius:3px; overflow:hidden; }
+#progress i{ display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--blue),var(--green)); transition:width .15s linear; }
+
+#navToggle{ display:none; }
+@media (max-width:860px){
+  #sidenav{ transform:translateX(-100%); transition:transform .3s ease; }
+  #sidenav.open{ transform:translateX(0); }
+  #navToggle{
+    display:flex; position:fixed; top:16px; left:16px; z-index:60; width:44px; height:44px; border-radius:12px;
+    background:var(--navy-2); border:1px solid var(--card-bd); align-items:center; justify-content:center; cursor:pointer;
+  }
+  #navToggle span, #navToggle span::before, #navToggle span::after{
+    content:""; display:block; width:20px; height:2px; background:#fff; position:relative; transition:.25s;
+  }
+  #navToggle span::before{ position:absolute; top:-6px; }
+  #navToggle span::after{ position:absolute; top:6px; }
+}
+
+/* number count-up target */
+.countup{ display:inline-block; }
+
+/* end-slide */
+.end-cta{ display:flex; gap:14px; flex-wrap:wrap; margin-top:28px; }
+.end-cta .btn{
+  padding:12px 22px; border-radius:12px; font-family:'Sora',sans-serif; font-weight:650; font-size:.9rem;
+  background:linear-gradient(135deg,var(--blue),var(--green)); color:#fff; border:none; cursor:pointer;
+}
+.end-cta .btn.ghost{ background:transparent; border:1px solid var(--card-bd); color:var(--ink); }
+
+.icon-dot{ width:8px;height:8px;border-radius:50%; background:var(--green); display:inline-block; margin-right:8px; flex-shrink:0; margin-top:7px; }
+.flex-row{ display:flex; align-items:flex-start; }
+</style>
+</head>
+<body>
+
+<button id="navToggle" aria-label="Mở menu"><span></span></button>
+
+<nav id="sidenav">
+  <div class="nav-head">
+    <div class="logo">PVPGB <span>SH1</span></div>
+    <div class="sub">Đào tạo Vận hành máy S/R</div>
+  </div>
+  <div id="progress"><i id="progressBar"></i></div>
+  <ul id="navlist"></ul>
+</nav>
+
+<main id="deck">
+
+<!-- 01 COVER -->
+<section class="slide" id="slide-cover" data-nav="Trang bìa" data-group="">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div><div class="orb orb-green orb2"></div><div class="orb orb-blue orb3"></div>
+  <div class="content-wrap">
+    <div class="cover-badge reveal">🎓 <b>Chương trình đào tạo nội bộ</b> · Phân xưởng Nhiên liệu — NMNĐ Sông Hậu 1</div>
+    <h1 class="h1 reveal r-d1">Vận hành máy Đánh phá đống (S/R)<br>&amp; Quản lý Kho than</h1>
+    <p class="lead reveal r-d2">Tài liệu huấn luyện tổng hợp phục vụ đào tạo, ôn thi sát hạch và nâng cao tay nghề cho Vận hành viên cương vị Đánh phá đống (ĐPĐ), Máy tính điều khiển (MTĐK) và Trưởng ca/Trưởng kíp Phân xưởng Nhiên liệu.</p>
+    <div class="cover-code reveal r-d3">TỔNG HỢP TỪ QT.SH1-NL.04 (Lần ban hành 03) &amp; QT.SH1-NL.05 (Lần ban hành 03) — Tháng 05/2026</div>
+    <div class="cover-meta reveal r-d4">
+      <div><b>STR 1700/850.37 SWVK</b>Kiểu thiết bị máy S/R</div>
+      <div><b>372.814 tấn</b>Tổng sức chứa kho than</div>
+      <div><b>37 Điều</b>Nội quy &amp; kỹ thuật vận hành</div>
+      <div><b>2 máy S/R41 · S/R42</b>Phạm vi vận hành 3 đống than</div>
+    </div>
+  </div>
+  <div class="footer-brand"><span class="dot"></span> CHI NHÁNH PHÁT ĐIỆN DẦU KHÍ — NHÀ MÁY NHIỆT ĐIỆN SÔNG HẬU 1</div>
+</section>
+
+<!-- 02 GOALS -->
+<section class="slide" id="slide-goals" data-nav="Mục tiêu &amp; lộ trình">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div><div class="orb orb-blue orb2"></div>
+  <div class="slide-index">02 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Khai giảng</div>
+    <h2 class="h2 reveal r-d1">Mục tiêu &amp; lộ trình khóa học</h2>
+    <p class="lead reveal r-d2">Sau khóa đào tạo, học viên nắm vững cấu tạo thiết bị, quy trình thao tác chuẩn và kỹ năng xử lý bất thường — đủ điều kiện tham gia sát hạch cương vị vận hành máy S/R và giám sát kho than.</p>
+    <div class="grid grid-3 reveal r-d3" style="margin-top:22px;">
+      <div class="card"><div class="card-num">A</div><h3 class="h3">Cấu tạo &amp; thông số máy S/R</h3><p class="body muted">9 cơ cấu chính, hệ thống an toàn, cabin điều khiển — Slide 07–17</p></div>
+      <div class="card"><div class="card-num">B</div><h3 class="h3">Vận hành đánh/phá đống</h3><p class="body muted">3 phương pháp đánh đống, phá đống 5 lớp cắt, chế độ vận hành — Slide 18–31</p></div>
+      <div class="card"><div class="card-num">C</div><h3 class="h3">Sự cố &amp; Quản lý kho than</h3><p class="body muted">Khắc phục hư hỏng, than tự cháy, tồn kho — Slide 32–37</p></div>
+    </div>
+    <div class="pill-row reveal r-d4">
+      <span class="tag">Lý thuyết cấu tạo</span><span class="tag">Quy trình thao tác</span><span class="tag green">An toàn vận hành</span>
+      <span class="tag green">Xử lý sự cố</span><span class="tag">Ôn thi sát hạch</span>
+    </div>
+  </div>
+</section>
+
+<!-- 03 PURPOSE/SCOPE -->
+<section class="slide" id="slide-purpose" data-nav="Mục đích &amp; phạm vi">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">03 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 0 · Tổng quan quy trình</div>
+    <h2 class="h2 reveal r-d1">Mục đích — Phạm vi áp dụng — Tài liệu viện dẫn</h2>
+    <div class="grid grid-2 reveal r-d2" style="margin-top:18px;">
+      <div class="card">
+        <h3 class="h3 accent-green">Mục đích</h3>
+        <p class="body">Áp dụng để vận hành và xử lý sự cố máy đánh đống/phá đống (S/R) của hệ thống vận chuyển than trong NMNĐ Sông Hậu 1.</p>
+        <h3 class="h3 accent-green" style="margin-top:14px;">Phạm vi áp dụng</h3>
+        <p class="body">Nội bộ Phân xưởng Nhiên liệu (PXNL). VHV cương vị ĐPĐ, MTĐK, Trưởng kíp (TK), Trưởng ca (TC) <b>bắt buộc</b> nắm vững quy trình này.</p>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-blue">Tài liệu tham khảo chính</h3>
+        <ul class="body">
+          <li>SH1-NAR-P0100-I-M02-PHL-Book3_STR 1750_850.37 SWVK-P0EAD41</li>
+          <li>SH1-NAR-P0EAA01-M-M02-MAN-0017 Rev.0 — Erection Instruction Manuals, Stacker-Reclaimer</li>
+          <li>20210528 NAR-STRE Operation Rev.2</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card reveal r-d3" style="margin-top:16px;">
+      <h3 class="h3">Mã số văn bản</h3>
+      <div class="pill-row">
+        <span class="tag">QT.SH1-NL.04 — Quy trình vận hành máy Đánh đống/Phá đống (S/R) — Lần BH 03 — 05/2026</span>
+      </div>
+      <div class="pill-row">
+        <span class="tag green">QT.SH1-NL.05 — Quy trình Vận hành &amp; Quản lý Kho than — Lần BH 03 — 05/2026</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 ABBREVIATIONS -->
+<section class="slide" id="slide-abbr" data-nav="Từ viết tắt">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">04 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 0 · Thuật ngữ</div>
+    <h2 class="h2 reveal r-d1">Từ viết tắt cần nhớ khi thi sát hạch</h2>
+    <div class="table-card reveal r-d2">
+      <table>
+        <thead><tr><th>Viết tắt</th><th>Ý nghĩa</th><th>Viết tắt</th><th>Ý nghĩa</th></tr></thead>
+        <tbody>
+          <tr><td><b>ĐPĐ</b></td><td>Đánh phá đống</td><td><b>TK</b></td><td>Trưởng kíp</td></tr>
+          <tr><td><b>VHV</b></td><td>Vận hành viên</td><td><b>TC</b></td><td>Trưởng ca</td></tr>
+          <tr><td><b>MTĐK</b></td><td>Máy tính điều khiển</td><td><b>PXNL</b></td><td>Phân xưởng Nhiên liệu</td></tr>
+          <tr><td><b>CHS</b></td><td>Điều khiển hệ thống vận chuyển than (Coal Handling System)</td><td><b>Nhà ĐKNL</b></td><td>Nhà điều khiển Nhiên liệu</td></tr>
+          <tr><td><b>GĐ / PGĐ</b></td><td>Giám đốc / Phó Giám đốc nhà máy</td><td><b>QĐ / PQĐ</b></td><td>Quản đốc / Phó Quản đốc</td></tr>
+          <tr><td><b>AT-BHLĐ</b></td><td>An toàn – Bảo hộ lao động</td><td><b>PCCC</b></td><td>Phòng cháy chữa cháy</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 05 SAFETY - FORBIDDEN -->
+<section class="slide" id="slide-safety-ban" data-nav="An toàn — Nghiêm cấm" data-group="AN TOÀN VẬN HÀNH">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">05 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 1 · An toàn vận hành</div>
+    <h2 class="h2 reveal r-d1">Nghiêm cấm vận hành máy ĐPĐ khi…</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="ban-card">
+        <ul>
+          <li>Tự ý thay đổi kết cấu, vị trí lắp đặt, bypass tín hiệu thiết bị bảo vệ khi chưa được Lãnh đạo PX cho phép</li>
+          <li>Thiết bị không bình thường; tốc độ gió vượt quá <b>20 m/s</b></li>
+          <li>Mối ghép bulông bị lỏng; các cơ cấu không được bôi trơn</li>
+          <li>Tín hiệu không tốt và thiếu ánh sáng</li>
+          <li>Xiết mối ghép bu lông khi máy đang làm việc mà không cắt điện</li>
+        </ul>
+      </div>
+      <div class="ban-card">
+        <ul>
+          <li>Trèo/chui qua băng tải kể cả khi không vận hành — phải đi cầu thang quy định</li>
+          <li>Ném tạp vật/dụng cụ từ trên cao xuống hoặc giữa các vị trí</li>
+          <li>Ngồi trên lan can máy ĐPĐ; bôi dầu mỡ lên đường đi, lan can</li>
+          <li>Mang hoặc chứa chất dễ cháy, nổ lên máy ĐPĐ</li>
+        </ul>
+      </div>
+    </div>
+    <p class="lead reveal r-d3" style="margin-top:14px;">Điều kiện làm việc bình thường: nhiệt độ <b class="accent-green">+16,7°C ~ 37,2°C</b>, tốc độ gió <b class="accent-green">nhỏ hơn 20 m/s</b>.</p>
+  </div>
+</section>
+
+<!-- 06 SAFETY - REQUIRED -->
+<section class="slide" id="slide-safety-req" data-nav="An toàn — Yêu cầu">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb2"></div>
+  <div class="slide-index">06 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 2 · An toàn vận hành</div>
+    <h2 class="h2 reveal r-d1">Yêu cầu bắt buộc khi vận hành máy ĐPĐ</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="warn-card">
+        <ul>
+          <li>VHV thực hiện đánh/phá đống theo phương án, chế độ vận hành <b>theo lệnh của TK Nhiên liệu</b></li>
+          <li>Mặc đầy đủ trang bị bảo hộ lao động theo quy định</li>
+          <li>Kiểm tra, sửa chữa, bôi trơn trên máy phải theo đúng Phiếu công tác</li>
+          <li>Chỉ VHV đã được đào tạo và sát hạch mới được vận hành thiết bị</li>
+          <li>Không vận hành khi chưa nhận tín hiệu lệnh; phát còi/đèn trước khi khởi động</li>
+        </ul>
+      </div>
+      <div class="warn-card">
+        <ul>
+          <li>Không khởi động/dừng đột ngột, tránh va chạm bộ giảm chấn đầu-cuối ray</li>
+          <li>Giữ cabin sạch sẽ, gọn gàng, tránh vật dễ cháy</li>
+          <li>Không để than trên băng tải khi rời vị trí; đưa cơ cấu về vị trí không làm việc</li>
+          <li>Khi máy không làm việc: <b>thực hiện neo máy và kẹp ray</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 EQUIP INTRO -->
+<section class="slide" id="slide-equip-intro" data-nav="Giới thiệu máy S/R" data-group="CẤU TẠO &amp; THÔNG SỐ MÁY S/R">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div><div class="orb orb-green orb3"></div>
+  <div class="slide-index">07 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 3–5 · Đặc tính kỹ thuật</div>
+    <h2 class="h2 reveal r-d1">Máy STR 1700/850.37 SWVK</h2>
+    <p class="lead reveal r-d2">S=Di chuyển trên ray, nâng hạ · T,R=Đánh đống &amp; phá đống kết hợp · W=Di chuyển tới/lùi · V=Feed roller table · K=Quấn cáp.</p>
+    <div class="stat-grid reveal r-d3">
+      <div class="stat"><div class="num countup" data-target="1700">0<span class="unit">t/h</span></div><div class="lbl">Năng suất đánh đống</div></div>
+      <div class="stat"><div class="num countup" data-target="850">0<span class="unit">t/h</span></div><div class="lbl">Năng suất phá đống</div></div>
+      <div class="stat"><div class="num">0–13</div><div class="lbl">Tốc độ di chuyển (m/phút)</div></div>
+      <div class="stat"><div class="num countup" data-target="37">0<span class="unit">m</span></div><div class="lbl">Chiều dài băng tải cần</div></div>
+      <div class="stat"><div class="num">±90°</div><div class="lbl">Góc quay cần (bảo vệ cấp 2: ±100°)</div></div>
+      <div class="stat"><div class="num countup" data-target="14">0<span class="unit">m</span></div><div class="lbl">Chiều cao đống than thực tế</div></div>
+    </div>
+    <p class="body muted reveal r-d4" style="margin-top:14px;">Kho than: dài <b>420.000 mm</b> × rộng <b>205.000 mm</b> · Tỷ trọng than <b>0,8 t/m³</b> · Nhiệt độ môi trường thiết kế <b>+17°C → +37°C</b>.</p>
+  </div>
+</section>
+
+<!-- 08 FUNCTIONS + OVERVIEW DIAGRAM -->
+<section class="slide" id="slide-functions" data-nav="Chức năng &amp; cấu tạo tổng thể">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">08 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 6–7 · Chức năng &amp; cấu tạo</div>
+    <h2 class="h2 reveal r-d1">3 chức năng chính của máy ĐPĐ liên hợp</h2>
+    <div class="grid grid-3 reveal r-d2">
+      <div class="card"><div class="card-num">01</div><h3 class="h3">Phá đống</h3><p class="body muted">Phá than, cấp lên băng tải P0EAC41/42 lên bunker lò — kiểu quay theo lớp &amp; điểm mặt nghiêng, năng suất <b>850 t/h</b>.</p></div>
+      <div class="card"><div class="card-num">02</div><h3 class="h3">Đánh đống</h3><p class="body muted">Nhập than từ tàu vào kho theo kiểu di chuyển, quay hoặc đỉnh điểm (Chevron), năng suất <b>1700 t/h</b>.</p></div>
+      <div class="card"><div class="card-num">03</div><h3 class="h3">Bypass</h3><p class="body muted">Cấp than thẳng lên bunker từ tàu qua đường Bypass, không qua lưu kho.</p></div>
+    </div>
+    <h3 class="h3 reveal r-d3" style="margin-top:22px;">Cấu tạo chính gồm</h3>
+    <div class="pill-row reveal r-d4">
+      <span class="tag">Gầu múc</span><span class="tag">Băng tải cần</span><span class="tag">Nâng/hạ cần</span><span class="tag">Di chuyển</span>
+      <span class="tag green">Tang quấn cáp điện/nước</span><span class="tag green">Trippercar</span><span class="tag green">Cấu trúc thép trên</span>
+      <span class="tag">Cabin điều khiển</span><span class="tag">Bơm mỡ tự động</span><span class="tag">Công tắc giới hạn &amp; encoder</span>
+    </div>
+  </div>
+</section>
+
+<!-- 09 BUCKET WHEEL -->
+<section class="slide" id="slide-bucket" data-nav="Cơ cấu gầu múc">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb2"></div>
+  <div class="slide-index">09 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 8a · Kết cấu bộ phận</div>
+    <h2 class="h2 reveal r-d1">Cơ cấu gầu múc</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <p class="body">Gồm thiết bị dẫn động, khung gầu, các gầu, trục bánh xe gầu và máng trượt. Có <b>8 gầu múc</b> lắp trên bánh xe bằng bulông tạo thành bánh xe gầu. Thiết bị bảo vệ moment xoắn được lắp trên động cơ.</p>
+        <p class="body">Máng trượt loại nâng được, hoạt động bởi hệ thống đẩy điện thủy lực: khi <b>phá đống</b> máng trượt &amp; tấm chặn đầu cần <b>hạ xuống</b>; khi <b>đánh đống</b> thì <b>nâng lên</b> để than dễ chuyển qua.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="num countup" data-target="6400">0<span class="unit">mm</span></div><div class="lbl">Đường kính gầu múc Φ</div></div>
+        <div class="stat"><div class="num">6.96</div><div class="lbl">Tốc độ quay (vòng/phút)</div></div>
+        <div class="stat"><div class="num">0.3</div><div class="lbl">Sức chứa mỗi gầu (m³)</div></div>
+        <div class="stat"><div class="num countup" data-target="8">0</div><div class="lbl">Số lượng gầu (cái)</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 BOOM CONVEYOR -->
+<section class="slide" id="slide-boom" data-nav="Cơ cấu băng tải cần">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">10 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 8b · Kết cấu bộ phận</div>
+    <h2 class="h2 reveal r-d1">Cơ cấu băng tải cần</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <p class="body">Lắp phía trên bề mặt, dưới cần đỡ; nâng/hạ dọc theo cần để đánh phá đống ở độ cao khác nhau. Hoạt động <b>2 chiều</b> (thuận/nghịch tương ứng đánh/phá đống).</p>
+        <p class="body">Đầu &amp; đuôi băng tải lắp gạt than sơ cấp/thứ cấp chống bám dính, tránh trượt băng. Con lăn giảm chấn lắp tại điểm nhận than gần đầu/đuôi rulo.</p>
+        <p class="body">Thiết bị bảo vệ: báo lệch băng, công tắc dây giật sự cố, báo rách băng, sensor giám sát tốc độ thấp.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="num">4.0</div><div class="lbl">Tốc độ băng tải (m/s)</div></div>
+        <div class="stat"><div class="num countup" data-target="1200">0<span class="unit">mm</span></div><div class="lbl">Chiều rộng băng tải</div></div>
+        <div class="stat"><div class="num">35°</div><div class="lbl">Góc lòng máng băng tải</div></div>
+        <div class="stat"><div class="num">26–38</div><div class="lbl">Lực căng băng cần (KN)</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 LUFFING -->
+<section class="slide" id="slide-luffing" data-nav="Cơ cấu nâng/hạ cần">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">11 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 8c · Kết cấu bộ phận</div>
+    <h2 class="h2 reveal r-d1">Cơ cấu nâng/hạ cần</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <p class="body">Truyền động bằng cặp xilanh thủy lực hai đầu, kết nối tấm sàn &amp; thanh dầm cần qua chốt bản lề — đưa ra/rút vào để nâng/hạ cần.</p>
+        <p class="body">Trạm bơm thủy lực kín; van cân bằng lắp ở đầu vào/ra xy lanh đảm bảo tốc độ ổn định, giữ cần đúng vị trí, không tự trôi khi xy lanh dừng. Dầu hồi được làm mát qua quạt.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="num">+13,5° / −8,4°</div><div class="lbl">Góc nâng / hạ cần</div></div>
+        <div class="stat"><div class="num">0,65</div><div class="lbl">Tốc độ nâng hạ tại xilanh (m/phút)</div></div>
+        <div class="stat"><div class="num">250</div><div class="lbl">Áp suất làm việc danh định (bar)</div></div>
+        <div class="stat"><div class="num">55</div><div class="lbl">Công suất bơm thủy lực (kW)</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 TRAVEL -->
+<section class="slide" id="slide-travel" data-nav="Di chuyển &amp; kẹp ray">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb2"></div>
+  <div class="slide-index">12 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 8d · Kết cấu bộ phận</div>
+    <h2 class="h2 reveal r-d1">Cơ cấu di chuyển &amp; kẹp ray thủy lực</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <p class="body">Gồm động cơ, hộp giảm tốc, bánh xe di chuyển, kẹp ray thủy lực, cao su làm sạch ray và giảm chấn. Trước khi thiết bị truyền động khởi động, <b>phanh phải mở trước</b> — PLC nhận tín hiệu rồi mới cho motor chạy.</p>
+        <p class="warn-card" style="margin-top:10px;">Kẹp ray thủy lực bảo vệ máy khỏi trượt khi gió &gt;20 m/s. Tự động <b>mở</b> khi cấp nguồn điều khiển; tự động <b>kẹp lại</b> khi mất điện hoặc cảnh báo gió &gt;20 m/s.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="num">14×5.5</div><div class="lbl">Số lượng × công suất động cơ (kW)</div></div>
+        <div class="stat"><div class="num countup" data-target="630">0<span class="unit">mm</span></div><div class="lbl">Đường kính bánh xe</div></div>
+        <div class="stat"><div class="num countup" data-target="7500">0<span class="unit">mm</span></div><div class="lbl">Khoảng cách đường ray</div></div>
+        <div class="stat"><div class="num">15</div><div class="lbl">Số lần khởi động cho phép / giờ</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 SLEWING -->
+<section class="slide" id="slide-slew" data-nav="Cơ cấu quay cần">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">13 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 8e · Kết cấu bộ phận</div>
+    <h2 class="h2 reveal r-d1">Cơ cấu quay cần</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <p class="body">Gồm thiết bị dẫn động quay, ổ trục quay kiểu ăn khớp bánh răng, vòng đỡ, mặt bích. Bánh răng dẫn động trên trục ra hộp giảm tốc khớp với vành bánh răng của ổ trục làm bệ quay xoay quanh khung cổng.</p>
+        <p class="body">Động cơ chạy nhiều cấp tần số, điều chỉnh tốc độ tự động bằng biến tần. Tín hiệu góc xoay được ghi nhận bởi <b>bộ mã hóa (encoder)</b> và hiển thị trong cabin.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat"><div class="num">37.000</div><div class="lbl">Bán kính quay cần (mm)</div></div>
+        <div class="stat"><div class="num">0–15</div><div class="lbl">Tốc độ quay (m/phút)</div></div>
+        <div class="stat"><div class="num">−90°/+90°</div><div class="lbl">Góc quay chuẩn (O&amp;M: −100°/+100°)</div></div>
+        <div class="stat"><div class="num">2×7.5</div><div class="lbl">Công suất động cơ quay (kW)</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 UPPER STRUCTURE + TRIPPERCAR -->
+<section class="slide" id="slide-upper" data-nav="Cấu trúc thép &amp; Trippercar">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">14 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 8f–g · Kết cấu bộ phận</div>
+    <h2 class="h2 reveal r-d1">Cấu trúc thép trên &amp; Trippercar</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-green">Cấu trúc thép trên</h3>
+        <p class="body">Dạng giàn — thanh nối tay đòn trước/sau, tháp, khung đối trọng, cần trục hỗ trợ. Là phần mang tải của ổ trục chính, nối với bệ xoay qua khớp nối hỗ trợ &amp; xi lanh nâng hạ để nâng/hạ cần trục và gàu xúc.</p>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-blue">Trippercar</h3>
+        <p class="body">Khung thép cố định phục vụ hệ thống đánh phá đống 1 chiều: khung băng tải Tripper car, bệ xe di chuyển, phòng điện, MBA, tang cáp điện &amp; cáp nước. Băng tải BC41/42 dùng chung khung Tripper car.</p>
+        <p class="body muted">Lắp cảm biến báo có than, báo tắc than, giám sát tốc độ thấp, dây giật sự cố và báo lệch băng 2 cấp.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 CABLE/WATER + CHUTE/CABIN BALANCE -->
+<section class="slide" id="slide-aux" data-nav="Quấn cáp — Dập bụi — Máng trượt">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb2"></div>
+  <div class="slide-index">15 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 8h–k · Cơ cấu phụ trợ</div>
+    <h2 class="h2 reveal r-d1">Quấn cáp · Dập bụi · Máng trượt · Cân bằng cabin</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-green">Tang quấn cáp điện &amp; nước</h3>
+        <p class="body">Quấn/nhả cáp đồng bộ với chuyển động tiến/lùi của máy. Nguồn 11kV lấy từ tủ điện trung tâm nhiên liệu. Hệ thống phun nước dập bụi tại: đầu Tripper car, băng tải cần, máng trượt gàu xúc, phễu trung tâm; kèm phun nước chữa cháy khi than cháy trên băng/đỉnh đống.</p>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-blue">Máng trượt &amp; tấm chắn</h3>
+        <p class="body"><b>Chế độ đánh đống:</b> tấm chắn đầu cần tự động nâng, tấm chắn đuôi hạ, máng trượt nâng bằng tay tại HMI.<br><b>Chế độ phá đống:</b> tấm chắn đầu cần tự động hạ, tấm chắn đuôi nâng, máng trượt hạ bằng tay tại HMI.</p>
+        <p class="body muted">Cân bằng cabin: giữ cabin song song mặt đất qua xilanh thủy lực + thiết bị đo độ nghiêng, có 2 switch giới hạn nghiêng trước/sau.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 SAFETY SYSTEM + CABIN -->
+<section class="slide" id="slide-safetysys" data-nav="Hệ thống an toàn &amp; Cabin">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">16 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 8l–o · An toàn &amp; điều khiển</div>
+    <h2 class="h2 reveal r-d1">Công tắc giới hạn — Encoder — Bôi trơn tự động — Cabin</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <ul>
+          <li class="body">Dây giật sự cố, báo lệch băng 2 cấp, dây chống va chạm cần</li>
+          <li class="body">5 radar đo khoảng cách đầu cần – đỉnh đống than (anti-collision)</li>
+          <li class="body">Encoder: quãng đường di chuyển dọc, góc quay cần, góc nâng/hạ cần</li>
+          <li class="body">Bơm mỡ trung tâm cho gầu múc, ổ bi quay cần, bánh răng quay cần — cảnh báo khi mức mỡ thấp</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-green">Cabin điều khiển</h3>
+        <p class="body">Trung tâm điều khiển điện &amp; vận hành máy; bảng điều khiển bố trí hai bên ghế ngồi. Có camera giám sát đầu cần &amp; camera tầm nhiệt (phát hiện than cháy), màn hình cảm ứng hiển thị thông số, bộ đàm liên lạc với trung tâm CHS.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 PRE-OP CHECKS -->
+<section class="slide" id="slide-precheck" data-nav="Kiểm tra trước vận hành" data-group="VẬN HÀNH ĐÁNH / PHÁ ĐỐNG">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">17 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 9 · Chuẩn bị vận hành</div>
+    <h2 class="h2 reveal r-d1">Kiểm tra trước khi đưa máy vào vận hành</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-blue">a) Kiểm tra tổng thể</h3>
+        <ul>
+          <li class="body">Thiết bị bảo vệ/giám sát lắp đặt đúng, hoạt động tốt; nút NGỪNG KHẨN CẤP tiếp cận dễ dàng</li>
+          <li class="body">Chốt neo đậu đã tách ra; kiểm tra rò rỉ dầu hộp giảm tốc, mức dầu thủy lực, mỡ bôi trơn</li>
+          <li class="body">Đường ray chắc chắn, không ngập than, không vật cản</li>
+          <li class="body">Kiểm tra máng trượt, phễu, hộp dỡ tải, băng tải cần: không tắc/bám dính than</li>
+          <li class="body">Phanh tốt, kẹp ray tin cậy, công tắc dây giật linh hoạt</li>
+          <li class="body">Không còn người ngoài khu vực vận hành</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-green">b) Kiểm tra tại buồng điều khiển</h3>
+        <ul>
+          <li class="body">Tủ điện không bất thường, đóng kín cửa tủ</li>
+          <li class="body">Điện áp trong phạm vi <b>+5% ~ −15%</b>, tiếp địa chắc chắn</li>
+          <li class="body">Kiểm tra sổ nhật ký vận hành, sổ theo dõi bất thường, Alarm list trên HMI</li>
+          <li class="body">Toàn bộ công tắc trong buồng điều khiển ở vị trí "0"/"OFF"</li>
+          <li class="body">Không để vật liệu dễ cháy nổ trong buồng điều khiển/phòng điện; bình cứu hỏa còn tốt</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 CHEVRON PILE 1&2 -->
+<section class="slide" id="slide-chevron12" data-nav="Chevron — Đống 1 &amp; 2">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb2"></div>
+  <div class="slide-index">18 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 10 · 6.2.1 Đánh đống Chevron (đỉnh điểm)</div>
+    <h2 class="h2 reveal r-d1">Đánh đống Chevron — Đống 1 &amp; Đống 2</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-blue">Đống 1 — máy S/R41</h3>
+        <p class="body muted">Góc xoay <b>−40°</b> · Góc nâng ≤10° · Tốc độ di chuyển <b>3,2 m/phút</b></p>
+        <ol class="steps" style="margin-top:10px;">
+          <li>Di chuyển dọc, đưa máy đến vị trí đánh đống</li>
+          <li>Nâng cần đến vị trí thích hợp</li>
+          <li>Quay cần ra vị trí cần đánh đống, quan sát radar/di chuyển</li>
+          <li>Kiểm tra tín hiệu Flap, máng trượt, tấm dẫn hướng đã sẵn sàng</li>
+          <li>Kiểm tra kỹ điều kiện an toàn</li>
+          <li>Chuyển chế độ vận hành về Locked hoặc Semi-Auto</li>
+          <li>Báo VHV MTĐK máy sẵn sàng, nhận tín hiệu từ CHS rồi khởi động</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-green">Đống 2 — máy S/R41</h3>
+        <p class="body muted">Góc xoay <b>62°</b> (lớp đáy) · Góc nâng ≤10° · Tốc độ di chuyển <b>3,2 m/phút</b></p>
+        <p class="body">Băng tải cần tự động nâng thêm <b>2°</b> sau mỗi lớp hoàn thành (giới hạn nâng Semi-Auto: <b>8,5°</b> — muốn tiếp tục phải chuyển Locked).</p>
+        <p class="body">Chiều dài đống: <b>290–210 m</b> (kho kín) · <b>195–10 m</b> (kho hở). Tổng chiều dài đánh được: <b>265 m</b>.</p>
+        <p class="body muted">Lưu ý: xác định trước vị trí, chất lượng than (bụi/mịn/ẩm) để đưa cần ở độ cao phù hợp, tránh phát tán bụi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 CHEVRON PILE 3 + ANGLE TABLE -->
+<section class="slide" id="slide-chevron3" data-nav="Chevron — Đống 3 &amp; bảng góc">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">19 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 10 · 6.2.1 Đánh đống Chevron</div>
+    <h2 class="h2 reveal r-d1">Đống 2 (tiếp) — Bảng góc quay theo bước &amp; Đống 3</h2>
+    <div class="table-card reveal r-d2">
+      <table>
+        <thead><tr><th>Bước đánh đống 2</th><th>Góc quay cần α</th><th>Phạm vi kho kín (m)</th><th>Phạm vi kho hở (m)</th></tr></thead>
+        <tbody>
+          <tr><td>Bước 1</td><td>72°</td><td>290 – 239</td><td>195 – 10</td></tr>
+          <tr><td>Bước 2</td><td>66°</td><td>290 – 236</td><td>195 – 10</td></tr>
+          <tr><td>Bước 3</td><td>60°</td><td>290 – 210</td><td>195 – 10</td></tr>
+          <tr><td>Bước 4</td><td>52°</td><td>290 – 210</td><td>195 – 10</td></tr>
+          <tr><td>Bước 5</td><td>46°</td><td>290 – 210</td><td>195 – 10</td></tr>
+          <tr><td>Bước 6</td><td>42°</td><td>290 – 210</td><td>195 – 10</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="body muted reveal r-d3" style="margin-top:6px;">Máy S/R42 đánh đối xứng phía còn lại (góc âm tương ứng). Kết thúc khi bề rộng đống đạt <b>53,1 m</b> (S/R41) hoặc <b>68 m</b> (S/R42).</p>
+    <div class="card reveal r-d4" style="margin-top:14px;">
+      <h3 class="h3 accent-green">Đống 3 — máy S/R42</h3>
+      <p class="body">Góc xoay <b>40°</b> (lớp đáy) · Nâng băng tải cần thêm <b>2°</b> mỗi lớp cho đến tối đa <b>10°</b>. Đánh <b>7 lớp than</b>, tương ứng 7 lần di chuyển máy — chiều cao lớp giảm dần khi đống càng cao. Tổng chiều dài đánh được: <b>237 m</b>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 20 LONG LINE STACKING -->
+<section class="slide" id="slide-line" data-nav="Đánh đống line dài + lu lèn">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">20 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">6.2.2 · Phương thức đánh đống</div>
+    <h2 class="h2 reveal r-d1">Đánh đống theo Line di chuyển dài kết hợp lu lèn</h2>
+    <p class="lead reveal r-d2">Ngăn ngừa than tự phát nhiệt, hạn chế ôxi trong đống, tăng thời gian lưu trữ, nâng công suất chứa, đề phòng sạt lở mùa mưa. Mỗi đống cao <b>~12 m</b> (5 lớp, mỗi lớp 2–3 m).</p>
+    <div class="grid grid-2 reveal r-d3">
+      <ol class="steps">
+        <li>Di chuyển &amp; quay cần đến vị trí nhập than, hạ cần đủ thấp để quan sát an toàn</li>
+        <li>Xác định vị trí nhập Line đầu tiên (góc quay ±63°→±25°), từ xa ray sang gần ray</li>
+        <li>Đạt cao 2–3m thì lùi máy 1–2m để tiếp tục Line</li>
+        <li>Hết giới hạn Line 1 → quay cần vào trong, sang Line 2 (khoảng cách đỉnh 1–2m)</li>
+        <li>Giữ nguyên góc nâng/hạ và phạm vi di chuyển để tiết kiệm nhiên liệu lu lèn</li>
+        <li>Đầy lớp 1 (tối thiểu 6 Line) → phun nước tạo ẩm và lu lèn bằng xe chuyên dụng</li>
+        <li>Lặp lại cho lớp 2 (cao ≤2m/line) và các lớp tiếp theo, tối đa <b>12m</b></li>
+      </ol>
+      <div class="card">
+        <h3 class="h3 accent-green">Ưu điểm</h3>
+        <p class="body">Vận hành đơn giản theo từng lớp/hàng; linh động đánh đống &amp; lu lèn; tạo lớp hình chữ nhật tăng diện tích chứa.</p>
+        <h3 class="h3 accent-blue" style="margin-top:10px;">Nhược điểm</h3>
+        <p class="body">Bề mặt nhiều đỉnh nhỏ dễ đọng nước mưa; cơ cấu di chuyển làm việc liên tục, phanh đóng/mở nhiều lần.</p>
+        <p class="body muted" style="margin-top:10px;">Chân than phải cách tường ≥2m để xe chuyên dụng ra vào xử lý cháy/lu lèn.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 SLEWING LAYER STACKING -->
+<section class="slide" id="slide-slewstack" data-nav="Đánh đống quay cần + lu lèn">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb2"></div>
+  <div class="slide-index">21 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">6.2.3 · Phương thức đánh đống</div>
+    <h2 class="h2 reveal r-d1">Đánh đống quay cần theo lớp kết hợp lu lèn</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <ol class="steps">
+        <li>Di chuyển &amp; quay cần tới vị trí nhập than, hạ cần quan sát an toàn (line cao 2–3m)</li>
+        <li>Xác định vị trí nhập than đầu tiên (góc quay ±63°→±25°)</li>
+        <li>Đạt cao 2–3m → xoay cần phải 5°–7° để tiếp tục line kế tiếp</li>
+        <li>Hết giới hạn line → lùi máy 1–2m, hoàn thành line kế (cách nhau 1–2m)</li>
+        <li>Lặp lại đến khi đầy lớp/mặt bằng đủ rộng</li>
+        <li>Phun nước tạo ẩm, lu lèn lớp 1 bằng xe chuyên dụng</li>
+        <li>Tiếp tục lớp 2 (≤2m/line), lu lèn — kết thúc khi cao tối đa <b>12m</b></li>
+      </ol>
+      <div class="card">
+        <p class="body">Phù hợp khi <b>lượng than tồn ít, thời gian lưu ngắn</b> — cần phá liền để cấp lò. Bố trí lu lèn tùy tình hình thực tế.</p>
+        <p class="body">Giữ nguyên góc nâng/hạ &amp; phạm vi di chuyển để hạn chế phát tán bụi và tiêu hao nhiên liệu lu lèn.</p>
+        <p class="body">Khi lên lớp 4–5, bề mặt hẹp, quay cần hạn chế → chuyển sang phương thức <b>line di chuyển dài</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 22 RECLAIM PRINCIPLE -->
+<section class="slide" id="slide-reclaim1" data-nav="Phá đống — Nguyên lý &amp; 5 lớp">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">22 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 11 · Phương thức phá đống</div>
+    <h2 class="h2 reveal r-d1">Nguyên lý phá đống &amp; 5 lớp cắt</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <p class="body">Đống 1 → máy S/R41 · Đống 3 → máy S/R42 · Đống 2 (giữa) → cả 2 máy đến giữa kho.</p>
+        <p class="body">Luôn phá <b>từ đầu kho đến cuối kho</b>, bắt đầu từ <b>lớp trên cùng</b>. Phá lớp bằng cách xoay cần → dừng → di chuyển tiến theo chiều sâu cắt → xoay cần ngược lại để cắt phần than kế tiếp.</p>
+        <p class="body">2 chế độ: <b>bằng tay</b> hoặc <b>bán tự động</b> (bán tự động không tối ưu do giới hạn góc/chiều rộng, lượng than trên băng thấp do chờ).</p>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Lớp cắt</th><th>Chiều cao</th><th>Góc nâng β</th></tr></thead>
+          <tbody>
+            <tr><td>Lớp 1</td><td>3,0 m</td><td>7°</td></tr>
+            <tr><td>Lớp 2</td><td>3,0 m</td><td>3°</td></tr>
+            <tr><td>Lớp 3</td><td>3,0 m</td><td>−1°</td></tr>
+            <tr><td>Lớp 4</td><td>3,0 m</td><td>−5°</td></tr>
+            <tr><td>Lớp 5</td><td>2,0 m</td><td>−8,4°</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="body muted reveal r-d3" style="margin-top:10px;">Đường kính gầu 6,4m · Tổng chiều cao đống than: <b class="accent-green">14 m</b>.</p>
+  </div>
+</section>
+
+<!-- 23 RECLAIM ANGLE LIMITS -->
+<section class="slide" id="slide-reclaim2" data-nav="Phá đống — Góc giới hạn">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">23 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 11 · Góc giới hạn bán tự động</div>
+    <h2 class="h2 reveal r-d1">Góc giới hạn quay cần α theo lớp phá đống</h2>
+    <p class="lead reveal r-d2">Trước khi phá đống bán tự động, bề rộng các lớp cắt khác nhau dẫn đến giới hạn góc xoay từng khu vực (có thể thay đổi tùy tình hình thực tế đống than).</p>
+    <div class="table-card reveal r-d3">
+      <table>
+        <thead><tr><th>Lớp</th><th>S/R41 · Kho 1 (Bắt đầu/Kết thúc)</th><th>S/R41 · Kho 2 (Bắt đầu/Kết thúc)</th><th>S/R42 · Kho 2 (Bắt đầu/Kết thúc)</th><th>S/R42 · Kho 3 (Bắt đầu/Kết thúc)</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>−35° / −65°</td><td>32° / 90°</td><td>−32° / −90°</td><td>35° / 65°</td></tr>
+          <tr><td>2</td><td>−23° / −75°</td><td>24° / 65°</td><td>−24° / −65°</td><td>23° / 75°</td></tr>
+          <tr><td>3</td><td>−17° / −80°</td><td>15° / 55°</td><td>−15° / −55°</td><td>17° / 80°</td></tr>
+          <tr><td>4</td><td>−11° / −90°</td><td>11° / 45°</td><td>−11° / −45°</td><td>11° / 90°</td></tr>
+          <tr><td>5</td><td>−14° / −90°</td><td>9° / 35°</td><td>−9° / −35°</td><td>14° / 90°</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="body muted reveal r-d4" style="margin-top:10px;">Máy ĐPĐ bắt đầu ở góc xoay α và góc nâng β = 0° (vị trí bắt đầu) — vị trí nâng băng tải cần tự động theo lớp phá được chọn.</p>
+  </div>
+</section>
+
+<!-- 24 OPERATING MODES -->
+<section class="slide" id="slide-modes" data-nav="Chế độ vận hành máy" data-group="CHẾ ĐỘ VẬN HÀNH &amp; KHỞI ĐỘNG">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb2"></div>
+  <div class="slide-index">24 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 12 · Chế độ vận hành</div>
+    <h2 class="h2 reveal r-d1">4 chế độ vận hành của máy</h2>
+    <div class="grid grid-4 reveal r-d2">
+      <div class="card"><h3 class="h3 accent-blue">Repair</h3><p class="body muted">Vận hành thiết bị tại chỗ, tốc độ chậm hơn — phục vụ sửa chữa, bảo dưỡng.</p></div>
+      <div class="card"><h3 class="h3 accent-blue">Manual Unlocked</h3><p class="body muted">Vận hành không liên động — kiểm tra ổn định thiết bị sau bảo dưỡng.</p></div>
+      <div class="card"><h3 class="h3 accent-green">Manual Locked</h3><p class="body muted">Vận hành liên động với tuyến băng tải — theo trình tự &amp; phương pháp hướng dẫn.</p></div>
+      <div class="card"><h3 class="h3 accent-green">Automatic S/R</h3><p class="body muted">Vận hành liên động tự động đánh đống/phá đống theo thông số cài đặt.</p></div>
+    </div>
+    <p class="body muted reveal r-d3" style="margin-top:14px;">Thay đổi chế độ chỉ thực hiện khi tất cả thiết bị đã dừng — nếu đang làm việc thì thiết bị sẽ dừng ngay lập tức khi đổi chế độ.</p>
+  </div>
+</section>
+
+<!-- 25 START-STOP SEQUENCE -->
+<section class="slide" id="slide-startstop" data-nav="Trình tự khởi động — dừng máy">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">25 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 13 · Trình tự thao tác</div>
+    <h2 class="h2 reveal r-d1">Trình tự khởi động &amp; dừng máy ĐPĐ</h2>
+    <div class="grid grid-3 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-blue">Phá đống</h3>
+        <ol class="steps">
+          <li>Khởi động băng tải cấp than lên lò từ kho</li>
+          <li>Khởi động băng tải cần</li>
+          <li>Khởi động guồng xúc than</li>
+          <li>Đưa cần tới vị trí phá đống</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-green">Đánh đống</h3>
+        <ol class="steps">
+          <li>Di chuyển máy đến vị trí đánh đống</li>
+          <li>Khởi động băng tải cần</li>
+          <li>Khởi động tuyến cấp than vào kho</li>
+          <li>Di chuyển máy đến vị trí đánh đống</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-blue">Bypass</h3>
+        <ol class="steps">
+          <li>Khởi động băng tải cấp than lên lò từ cảng</li>
+          <li>Khởi động băng tải cần theo chiều phá đống</li>
+          <li>Khởi động tuyến băng tải sau khi băng tải cần đã chạy</li>
+        </ol>
+      </div>
+    </div>
+    <p class="body muted reveal r-d3" style="margin-top:12px;"><b>Dừng tuyến:</b> thực hiện theo trình tự ngược lại.</p>
+  </div>
+</section>
+
+<!-- 26 CONTROL PANEL -->
+<section class="slide" id="slide-panel" data-nav="Bảng điều khiển cabin">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">26 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 14 · Thao tác cabin</div>
+    <h2 class="h2 reveal r-d1">Bảng điều khiển máy S/R</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="table-card">
+        <table>
+          <thead><tr><th colspan="2">Bàn điều khiển bên trái</th></tr></thead>
+          <tbody>
+            <tr><td>Travel drive forward/backward</td><td>Đẩy/kéo cần di chuyển</td></tr>
+            <tr><td>Ready / Warning / Fault</td><td>Đèn sẵn sàng / cảnh báo lỗi / báo lỗi</td></tr>
+            <tr><td>Trouble Acknowledge</td><td>Nút xác nhận lỗi</td></tr>
+            <tr><td>By pass (0=OFF;1=ON)</td><td>Khóa bỏ qua bảo vệ trên máy</td></tr>
+            <tr><td>Single operation</td><td>Khóa bỏ qua bảo vệ va chạm 2 máy</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th colspan="2">Bàn điều khiển bên phải</th></tr></thead>
+          <tbody>
+            <tr><td>Slewing drive left/right</td><td>Xoay cần trái/phải</td></tr>
+            <tr><td>Hoisting lifting/lowering</td><td>Nâng/hạ cần</td></tr>
+            <tr><td>Repair/Unlocked/Locked/Spare</td><td>Lựa chọn chế độ vận hành</td></tr>
+            <tr><td>Stacker/Reclaimer/Bypass/Embers</td><td>Lựa chọn chức năng vận hành</td></tr>
+            <tr><td>Main switch ON/OFF, Control ON/OFF</td><td>Đóng/ngắt nguồn chính &amp; điều khiển</td></tr>
+            <tr><td>Bucket wheel / Boom conveyor ON-OFF</td><td>Khởi động/dừng gầu múc &amp; băng tải cần</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 27 OPERATING FUNCTIONS DETAIL -->
+<section class="slide" id="slide-func-detail" data-nav="Chức năng vận hành chi tiết">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb2"></div>
+  <div class="slide-index">27 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 14 · Chức năng vận hành</div>
+    <h2 class="h2 reveal r-d1">Manual Locked · Bypass · Automatic · Embers Identifier</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-green">Manual Locked Stacking</h3>
+        <p class="body">Đánh đống thủ công; khi radar front đạt <b>2,4m</b> có còi báo đủ độ cao → lùi máy 1m, lặp lại đến khi đạt chiều dài xác định.</p>
+        <h3 class="h3 accent-green" style="margin-top:10px;">Manual Locked Reclaiming</h3>
+        <p class="body">Quay cần trái/phải phá theo lớp; hết biên ngoài đống → di chuyển tối đa 60cm → quay ngược lại, lặp 8 lần/lớp. Lượng tải không vượt <b>1000 t/h</b> theo cân trên máy.</p>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-blue">Bypass Operation</h3>
+        <p class="body">Góc quay/nâng hạ ở 0° (vị trí bắt đầu); thành sau máng phía rulo chủ động mở; băng tải cần chạy theo chiều phá đống.</p>
+        <h3 class="h3 accent-blue" style="margin-top:10px;">Automatic Stacking/Reclaiming</h3>
+        <p class="body">VHV thiết lập vị trí bắt đầu/kết thúc, góc nâng/quay — máy tự động xếp chồng/phá đống đến khi đạt điều kiện. Lỗi đo lường → tự động chuyển về thủ công.</p>
+        <h3 class="h3 accent-blue" style="margin-top:10px;">Embers Identifier</h3>
+        <p class="body">Camera hồng ngoại đầu cần kiểm tra than cháy trong đống, tốc độ di chuyển <b>5 m/phút</b>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 28 MONITORING + FIRE HANDLING -->
+<section class="slide" id="slide-monitor" data-nav="Theo dõi &amp; xử lý than cháy">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">28 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 15 · Theo dõi khi vận hành</div>
+    <h2 class="h2 reveal r-d1">Kiểm tra định kỳ &amp; xử lý khi phát hiện than cháy</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-blue">Kiểm tra định kỳ</h3>
+        <ul>
+          <li class="body">Cơ khí: bulông, mức mỡ, mài mòn bánh xe/kẹp ray, độ rung, nhiệt độ gối trục</li>
+          <li class="body">Điện: công tắc, tang cáp, hệ thống chiếu sáng &amp; ắc quy sự cố, độ tin cậy công tắc giới hạn</li>
+          <li class="body">Thủy lực: van, ống mềm áp suất cao (kiểm tra hàng ngày), gioăng chèn xy lanh</li>
+        </ul>
+      </div>
+      <div class="ban-card">
+        <h3 class="h3">Phát hiện than cháy khi phá đống</h3>
+        <p class="body"><b>Dấu hiệu:</b> khói vàng đặc, than chuyển màu vàng, camera nhiệt báo nhiệt độ cao.</p>
+        <ul>
+          <li>Mở vòi nước phun lên đống than đầu cần, giảm cháy</li>
+          <li>Liên tục quan sát điểm than có khả năng cháy</li>
+          <li>Nếu gàu xúc lên than cháy → mở nước chữa cháy &amp; dập bụi đầu cần</li>
+          <li>Phá ngay lớp than cháy → <b>dừng ngay</b> (nâng cần, dừng gàu, dừng băng tải cần), kiểm tra khu vực máng cáp/khung dầm/băng tải, báo cấp trên</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 29 STOP CONDITIONS -->
+<section class="slide" id="slide-stop" data-nav="Dừng máy: thường/lỗi/khẩn cấp">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">29 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 16–18 · Ngừng máy</div>
+    <h2 class="h2 reveal r-d1">Dừng máy: Bình thường — Do lỗi — Khẩn cấp</h2>
+    <div class="grid grid-3 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-green">Dừng bình thường</h3>
+        <p class="body muted">Đánh đống: các băng tải dừng lần lượt, băng tải cần dừng sau cùng khi hết than.</p>
+        <p class="body muted">Phá đống: gầu múc dừng trước, cơ cấu di chuyển dừng theo, các băng tải dừng dần.</p>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-blue">Dừng do lỗi</h3>
+        <ul><li class="body">Băng tải cần lỗi/trượt/lệch</li><li class="body">Gầu múc quay chậm; biến tần lỗi</li><li class="body">Bồn dầu thủy lực thấp; dòng động cơ quá lớn</li><li class="body">Gió &gt;20m/s; mất nguồn điều khiển</li></ul>
+      </div>
+      <div class="ban-card">
+        <h3 class="h3">Dừng khẩn cấp</h3>
+        <ul><li>Băng tải cần gãy/nứt/lắc lư nhiều do tắc than</li><li>Điện áp đột ngột ngắt/dao động lớn</li><li>Bánh xe trật ray; kho than tràn lấp đường ray</li><li>Thân máy rung lắc đột ngột; cháy nổ</li></ul>
+      </div>
+    </div>
+    <p class="body muted reveal r-d3" style="margin-top:12px;">Sau khi dừng: đưa máy về vị trí neo, chuyển công tắc về "0"/"OFF", ngắt nguồn, đóng kẹp ray &amp; chốt neo, vệ sinh máy, ghi đầy đủ vào sổ nhật ký vận hành.</p>
+  </div>
+</section>
+
+<!-- 30 WIND SAFETY -->
+<section class="slide" id="slide-wind" data-nav="An toàn gió lớn &amp; bảo vệ">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb2"></div>
+  <div class="slide-index">30 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 19–20 · Quy tắc an toàn</div>
+    <h2 class="h2 reveal r-d1">An toàn khi gió lớn &amp; Thông số bảo vệ ĐPĐ</h2>
+    <div class="stat-grid reveal r-d2">
+      <div class="stat"><div class="num">0–20</div><div class="lbl">Gió (m/s) — vận hành bình thường</div></div>
+      <div class="stat"><div class="num">16</div><div class="lbl">m/s — bắt đầu đưa gầu về vị trí neo, kẹp ray</div></div>
+      <div class="stat"><div class="num">20</div><div class="lbl">m/s — dừng ngay, neo &amp; kẹp ray bắt buộc</div></div>
+      <div class="stat"><div class="num">21–38</div><div class="lbl">m/s — dừng hoạt động, gài chốt chống bão</div></div>
+    </div>
+    <div class="grid grid-2 reveal r-d3" style="margin-top:16px;">
+      <div class="card">
+        <h3 class="h3 accent-blue">Sau khi gió lớn — kiểm tra</h3>
+        <ul><li class="body">Không có chướng ngại vật trên ray</li><li class="body">Chốt neo, vị trí neo đậu còn nguyên vẹn</li><li class="body">Cấu trúc chính không biến dạng/nứt</li><li class="body">Cabin, phòng điện không ẩm/hư hại; cáp điện không thiệt hại</li></ul>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-green">Thông số bảo vệ khác</h3>
+        <ul>
+          <li class="body">Khoảng cách an toàn giữa 2 máy: <b>39 m</b> (thực tế 45m)</li>
+          <li class="body">Góc giới hạn quay cần tại cột bê tông mái che: <b>+40°</b> (SR41) / <b>−40°</b> (SR42)</li>
+          <li class="body">Tốc độ thấp của băng tải cần: <b>90%</b></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 31 MAIN SWITCH / 11kV -->
+<section class="slide" id="slide-breaker" data-nav="Máy cắt Main Switch &amp; 11kV" data-group="THIẾT BỊ ĐIỆN &amp; XỬ LÝ SỰ CỐ">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">31 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Mục 6.3 · Thao tác máy cắt</div>
+    <h2 class="h2 reveal r-d1">Máy cắt Main Switch &amp; Máy cắt 11kV</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-blue">Main Switch — Siemens 3VL9800-3MQ00PR</h3>
+        <p class="body">Trạng thái ON: cờ trắng tại ON, đỏ tại OFF. Trạng thái Trip: cờ trắng ở cả 2 vị trí.</p>
+        <ol class="steps">
+          <li>Kiểm nhận thiết bị ở OFF</li>
+          <li>Nhấn nút ON motor charging — 3s sau máy cắt tự đóng</li>
+          <li>Kiểm nhận trạng thái hiển thị đã ON</li>
+        </ol>
+        <p class="body muted">Thao tác Lock: chỉ thực hiện khi thiết bị ở OFF, kéo chốt khóa, tra khóa cố định.</p>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-green">Máy cắt 11kV — Siemens SF6 8DJH KT</h3>
+        <p class="body">Ur = 12kV · Up = 75kV · Ud = 28kV. Ngăn K: thanh cái đầu vào; Ngăn T: cầu dao phụ tải, cầu chì bảo vệ MBA.</p>
+        <ol class="steps">
+          <li>Kiểm nhận mã KKS, không còn công tác/phiếu khóa</li>
+          <li>Kiểm tra cờ chỉ thị khí SF6 (điều kiện đóng ngắt)</li>
+          <li>Thao tác gạt/quay lò xo tích năng, nhấn nút ON/OFF theo trình tự</li>
+          <li>Đóng tiếp địa &amp; treo biển báo khi kết thúc (đối với ngắt máy cắt)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 32 MECH FAULTS -->
+<section class="slide" id="slide-fault-mech" data-nav="Sự cố cơ khí thường gặp">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">32 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 21 · Bất thường vận hành</div>
+    <h2 class="h2 reveal r-d1">Sự cố &amp; khắc phục — Phần cơ khí</h2>
+    <div class="table-card reveal r-d2">
+      <table>
+        <thead><tr><th>Cơ cấu</th><th>Hư hỏng</th><th>Nguyên nhân điển hình</th><th>Cách khắc phục</th></tr></thead>
+        <tbody>
+          <tr><td>Di chuyển</td><td>Ray có vết cắt/nứt</td><td>Tốc độ dọc không đồng bộ, lắp ray sai lệch</td><td>Kiểm tra cơ cấu dẫn động, ổ đỡ; điều chỉnh ray</td></tr>
+          <tr><td>Bánh răng</td><td>Gãy răng, khe nứt</td><td>Nẩy lên khi vận hành, tiếng ồn bất thường</td><td>Thay thế bánh răng</td></tr>
+          <tr><td>Hộp giảm tốc</td><td>Tăng nhiệt trong ổ trục</td><td>Ổ trục lắp sai, thiếu dầu bôi trơn</td><td>Thay ổ trục, bổ sung/thay dầu bôi trơn</td></tr>
+          <tr><td>Phanh</td><td>Trượt dài sau khi ngắt điện</td><td>Thiết bị dẫn động thủy lực không linh hoạt</td><td>Kiểm tra dầu, làm sạch phanh &amp; bánh hãm</td></tr>
+          <tr><td>Khớp nối thủy lực</td><td>Không đạt tốc độ định mức</td><td>Tra dầu quá nhiều/quá ít</td><td>Kiểm tra dung tích dầu, xả/tra lại theo tiêu chuẩn</td></tr>
+          <tr><td>Ổ trục</td><td>Nhiệt độ cao</td><td>Móng lỏng, thiếu mỡ bôi trơn</td><td>Xiết chặt bu lông móng, bổ sung mỡ đúng dung tích</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- 33 ELEC/CONVEYOR/LUBE FAULTS -->
+<section class="slide" id="slide-fault-elec" data-nav="Sự cố điện — băng tải — bôi trơn">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb2"></div>
+  <div class="slide-index">33 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Điều 22–30 · Bất thường vận hành</div>
+    <h2 class="h2 reveal r-d1">Sự cố &amp; khắc phục — Điện, băng tải, bôi trơn, dập bụi</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Sự cố</th><th>Nguyên nhân</th><th>Xử lý</th></tr></thead>
+          <tbody>
+            <tr><td>Máy tự dừng khẩn cấp</td><td>Dây giật băng tải, ngừng khẩn từ CHS</td><td>Kiểm tra, giải trừ, liên lạc CHS</td></tr>
+            <tr><td>Băng tải cần bị lệch</td><td>Lực căng không đều, vật liệu dính con lăn</td><td>Hiệu chỉnh con lăn, làm sạch bề mặt</td></tr>
+            <tr><td>Băng tải bị trượt</td><td>Ổ trục/con lăn hỏng, lực căng không đạt</td><td>Thay con lăn, điều chỉnh lực căng</td></tr>
+            <tr><td>Sai lệch encoder</td><td>2 encoder lệch quá giá trị cho phép</td><td>Repair mode, chạy về điểm đầu/cuối ray đồng bộ lại</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="table-card">
+        <table>
+          <thead><tr><th>Sự cố</th><th>Nguyên nhân</th><th>Xử lý</th></tr></thead>
+          <tbody>
+            <tr><td>Không có mỡ tại điểm bôi trơn</td><td>Ống tắc/rò, bộ tra mỡ hỏng</td><td>Xác định vị trí tắc/rò, thay thế bộ tra mỡ</td></tr>
+            <tr><td>Đầu phun không ra nước</td><td>Ống tắc/gãy, áp lực không đủ</td><td>Làm sạch, nối lại ống, kiểm tra van áp lực</td></tr>
+            <tr><td>Flap không đổi vị trí</td><td>Mất nguồn bơm thủy lực, valve không tác động</td><td>Kiểm tra CB, đường ống, báo BDSC</td></tr>
+            <tr><td>Báo tắc than tác động sai</td><td>Sensor mất vị trí/hư hỏng, than dính</td><td>Vệ sinh, cố định lại vị trí sensor</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 34 COAL YARD PARAMS -->
+<section class="slide" id="slide-yard" data-nav="Kho than: thông số &amp; sức chứa" data-group="QUẢN LÝ KHO THAN">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb1"></div>
+  <div class="slide-index">34 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">QT.SH1-NL.05 · Mục 5.2 · Kho than</div>
+    <h2 class="h2 reveal r-d1">Thông số kho than &amp; sức chứa 3 đống</h2>
+    <div class="stat-grid reveal r-d2">
+      <div class="stat"><div class="num countup" data-target="372814">0</div><div class="lbl">Tổng sức chứa kho than (tấn) — đủ cấp 2 tổ máy 30 ngày đêm</div></div>
+      <div class="stat"><div class="num countup" data-target="93191">0</div><div class="lbl">Sức chứa đống 1 &amp; đống 3 (tấn/mỗi đống)</div></div>
+      <div class="stat"><div class="num countup" data-target="186431">0</div><div class="lbl">Sức chứa đống 2 (tấn)</div></div>
+      <div class="stat"><div class="num countup" data-target="83159">0</div><div class="lbl">Sức chứa kho kín (tấn) — 7 ngày than khô</div></div>
+    </div>
+    <div class="grid grid-2 reveal r-d3" style="margin-top:16px;">
+      <div class="card">
+        <p class="body">Diện tích kho than: <b>413m × 198m</b> · Kho kín: <b>80m × 198m</b>. Chiều cao đống: <b>15m</b> · Tỷ trọng: <b>0,8 t/m³</b>.</p>
+        <p class="body">BC41 dọc đống 1&amp;2 (nhận từ BC31/TT03) → S/R41. BC42 dọc đống 2&amp;3 (nhận từ BC21/BC22/TT02) → S/R42.</p>
+      </div>
+      <div class="card">
+        <p class="body">Tiêu thụ than: <b>509,2 t/h</b> ≈ <b>12.221 t/ngày</b>. Số ngày vận hành BMCR liên tục tối đa: <b>~30,5 ngày</b>.</p>
+        <p class="body muted">Tường chắn gió bằng tôn đục lỗ xung quanh kho giúp giảm gió, hạn chế phát tán bụi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 35 SELF-COMBUSTION -->
+<section class="slide" id="slide-combustion" data-nav="Than tự bốc cháy">
+  <div class="bg-photo bg-grad-a"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div>
+  <div class="slide-index">35 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Mục 5.3.2–5.3.3 · Rủi ro kho than</div>
+    <h2 class="h2 reveal r-d1">Than tự bốc cháy — Nguyên nhân &amp; Dấu hiệu nhận biết</h2>
+    <div class="table-card reveal r-d2">
+      <table>
+        <thead><tr><th>Nhiệt độ</th><th>Hiện tượng</th><th>Khí sinh ra</th></tr></thead>
+        <tbody>
+          <tr><td>25–60°C</td><td>Nhiệt độ tăng, sinh ẩm, khô/phân hủy gỗ, mùi Parafin</td><td>Hơi ẩm, chất bốc bay lên</td></tr>
+          <tr><td>60–150°C</td><td>Nhiệt tăng nhanh, đốt cháy khí gas tự nhiên</td><td>H₂O, CO (~80°C) · CO₂ (~150°C)</td></tr>
+          <tr><td>150–300°C</td><td>Phân hủy than, mùi kích thích mạnh</td><td>CH₄ (~250°C), Etan, Ethylene</td></tr>
+          <tr><td>300–800°C</td><td>Gây cháy, cacbon hóa than, 2 giai đoạn phân hủy</td><td>Lượng lớn khói khí gas, lửa nhiên liệu</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid grid-2 reveal r-d3" style="margin-top:12px;">
+      <div class="card"><h3 class="h3 accent-blue">Yếu tố bên ngoài</h3><p class="body">Điều kiện/phương pháp/khối lượng/thời gian lưu trữ, cấu trúc kho, nhiệt độ – độ ẩm – gió.</p></div>
+      <div class="card"><h3 class="h3 accent-green">Yếu tố bên trong</h3><p class="body">Thành phần chất bốc &gt;36%, oxy &gt;90%; độ ẩm 10–15% dễ hấp thụ oxy; hạt càng nhỏ oxy hóa càng nhanh; FeS₂ + P xúc tác cháy.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 36 PREVENTION MEASURES -->
+<section class="slide" id="slide-prevention" data-nav="Biện pháp phòng chống cháy">
+  <div class="bg-photo bg-grad-b"></div><div class="bg-grid"></div>
+  <div class="orb orb-green orb2"></div>
+  <div class="slide-index">36 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Mục 5.3.4 · Phòng ngừa &amp; quản lý</div>
+    <h2 class="h2 reveal r-d1">Biện pháp phòng chống theo dải nhiệt độ &amp; Quy tắc FIFO</h2>
+    <div class="table-card reveal r-d2">
+      <table>
+        <thead><tr><th>Dải nhiệt độ</th><th>Hành động bắt buộc</th></tr></thead>
+        <tbody>
+          <tr><td>40–50°C</td><td>Tăng tuần tra giám sát; đầm bề mặt bằng máy ủi</td></tr>
+          <tr><td>50–60°C</td><td>Phun nước, ưu tiên đánh đống than khác; đầm nén sau khi đào lên</td></tr>
+          <tr><td>60–80°C (nguy hiểm 1)</td><td>Ưu tiên cao nhất phá đống + lu lèn; phun nước liên tục đến khi hết cháy</td></tr>
+          <tr><td>&gt;80°C (nguy hiểm 2)</td><td>Xe cuốc đào tại chỗ, di chuyển đến vị trí khác, phun nước làm mát liên tục</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid grid-3 reveal r-d3" style="margin-top:14px;">
+      <div class="card"><h3 class="h3 accent-blue">FIFO &amp; lu lèn</h3><p class="body muted">Than nhập trước phá trước; lưu &gt;10 ngày phải lu lèn (lớp 1,5–2m, cao ≤15m); không quá 15 ngày lưu kho.</p></div>
+      <div class="card"><h3 class="h3 accent-green">Dập bụi</h3><p class="body muted">Vận hành khi gió &gt;8 m/s; độ ẩm bề mặt than &gt;10%; tối thiểu 3 lần/ngày, mùa khô 6 lần/ngày.</p></div>
+      <div class="card"><h3 class="h3 accent-blue">Chống sụp đổ</h3><p class="body muted">Cao ≤10m mùa mưa; phủ than thô bên ngoài; vệ sinh cống thoát nước định kỳ.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 37 SUMMARY / CHECKLIST -->
+<section class="slide" id="slide-summary" data-nav="Tổng kết &amp; ôn thi">
+  <div class="bg-photo bg-grad-c"></div><div class="bg-grid"></div>
+  <div class="orb orb-blue orb1"></div><div class="orb orb-green orb2"></div>
+  <div class="slide-index">37 / 37</div>
+  <div class="content-wrap">
+    <div class="kicker reveal">Tổng kết khóa học</div>
+    <h2 class="h2 reveal r-d1">Checklist ôn thi sát hạch vận hành viên</h2>
+    <div class="grid grid-2 reveal r-d2">
+      <div class="card">
+        <h3 class="h3 accent-green">Phải thuộc lòng</h3>
+        <ul>
+          <li class="body">Ngưỡng gió: 16 m/s (chuẩn bị neo) — 20 m/s (dừng &amp; kẹp ray bắt buộc)</li>
+          <li class="body">5 lớp cắt phá đống &amp; góc nâng β tương ứng (7°→ −8,4°)</li>
+          <li class="body">4 chế độ vận hành: Repair / Manual Unlocked / Manual Locked / Automatic</li>
+          <li class="body">Trình tự khởi động đánh đống – phá đống – bypass</li>
+          <li class="body">Định mức tồn kho tối thiểu/tối đa theo tháng &amp; ngưỡng báo cáo khẩn 15–10–7 ngày</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 class="h3 accent-blue">Kỹ năng thực hành</h3>
+        <ul>
+          <li class="body">Thao tác đóng/cắt Main Switch &amp; máy cắt 11kV đúng trình tự an toàn</li>
+          <li class="body">Nhận diện dấu hiệu than cháy &amp; quy trình xử lý khẩn cấp</li>
+          <li class="body">Tra bảng sự cố cơ khí – điện – băng tải để chẩn đoán nhanh</li>
+          <li class="body">Ghi chép nhiệt độ gối đỡ Pulley theo Phụ lục QT.SH1-NL.04.PL.01</li>
+        </ul>
+      </div>
+    </div>
+    <div class="end-cta reveal r-d3">
+      <span class="tag green">Chúc các Vận hành viên ôn thi và vận hành an toàn — hiệu quả!</span>
+    </div>
+  </div>
+  <div class="footer-brand"><span class="dot"></span> PXNL — NMNĐ SÔNG HẬU 1 · QT.SH1-NL.04 &amp; QT.SH1-NL.05 · Lần ban hành 03</div>
+</section>
+
+</main>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var navlist = document.getElementById('navlist');
+  var progressBar = document.getElementById('progressBar');
+  var deck = document.getElementById('deck');
+
+  // Build nav dynamically
+  slides.forEach(function(s, i){
+    var label = s.getAttribute('data-nav') || s.id;
+    var group = s.getAttribute('data-group');
+    if(group){
+      var g = document.createElement('div');
+      g.className = 'group-label';
+      g.textContent = group;
+      navlist.appendChild(g);
+    }
+    var li = document.createElement('a');
+    li.href = '#' + s.id;
+    li.setAttribute('data-target', s.id);
+    var n = document.createElement('span');
+    n.className = 'n';
+    n.textContent = (i+1 < 10 ? '0' : '') + (i+1);
+    li.appendChild(n);
+    var t = document.createElement('span');
+    t.textContent = label;
+    li.appendChild(t);
+    navlist.appendChild(li);
+  });
+
+  var navLinks = Array.prototype.slice.call(navlist.querySelectorAll('a'));
+
+  navLinks.forEach(function(a){
+    a.addEventListener('click', function(e){
+      e.preventDefault();
+      var target = document.getElementById(a.getAttribute('data-target'));
+      if(target){ target.scrollIntoView({behavior:'smooth', block:'start'}); }
+      if(window.innerWidth <= 860){
+        document.getElementById('sidenav').classList.remove('open');
+      }
+    });
+  });
+
+  function setActive(id){
+    navLinks.forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('data-target') === id);
+    });
+  }
+
+  // Reveal + active nav via IntersectionObserver
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('in-view'); });
+        if(entry.intersectionRatio > 0.5){ setActive(entry.target.id); }
+      }
+    });
+  }, { root: deck, threshold: [0.15, 0.5, 0.75] });
+
+  slides.forEach(function(s){ io.observe(s); });
+
+  // Progress bar
+  deck.addEventListener('scroll', function(){
+    var max = deck.scrollHeight - deck.clientHeight;
+    var pct = max > 0 ? (deck.scrollTop / max) * 100 : 0;
+    progressBar.style.width = pct + '%';
+  });
+
+  // Count-up numbers
+  var counted = new WeakSet();
+  var cio = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting && !counted.has(entry.target)){
+        counted.add(entry.target);
+        var el = entry.target;
+        var target = parseFloat(el.getAttribute('data-target'));
+        var dur = 1200;
+        var start = null;
+        var unitSpan = el.querySelector('span.unit');
+        function step(ts){
+          if(!start) start = ts;
+          var p = Math.min((ts - start) / dur, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          var val = Math.floor(eased * target);
+          el.childNodes[0].nodeValue = val.toLocaleString('vi-VN');
+          if(p < 1){ requestAnimationFrame(step); }
+          else {
+            el.childNodes[0].nodeValue = target.toLocaleString('vi-VN');
+          }
+        }
+        requestAnimationFrame(step);
+      }
+    });
+  }, { root: deck, threshold: 0.4 });
+  document.querySelectorAll('.countup').forEach(function(el){ cio.observe(el); });
+
+  // Mobile nav toggle
+  var toggle = document.getElementById('navToggle');
+  if(toggle){
+    toggle.addEventListener('click', function(){
+      document.getElementById('sidenav').classList.toggle('open');
+    });
+  }
+
+  // init first active
+  setActive(slides[0].id);
+})();
+</script>
+</body>
+</html>
