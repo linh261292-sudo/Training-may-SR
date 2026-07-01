@@ -114,20 +114,21 @@ h1,h2,h3,.font-display{
 
 /* ---------- typography blocks ---------- */
 .kicker{
-  display:inline-flex; align-items:center; gap:.5em;
+  display:flex; width:fit-content; align-items:center; justify-content:center; gap:.5em;
   font-size:var(--fs-eyebrow); letter-spacing:.16em; text-transform:uppercase;
-  color:var(--green-light); font-weight:600; margin-bottom:14px;
+  color:var(--green-light); font-weight:600; margin:0 auto 14px;
 }
 .kicker::before{ content:""; width:26px; height:2px; background:var(--green); display:inline-block; }
 .slide-index{
   position:absolute; top:clamp(20px,4vh,40px); right:clamp(20px,4vw,56px);
   font-family:'Sora',sans-serif; font-size:var(--fs-small); color:var(--muted-2); letter-spacing:.08em;
 }
-h1.h1{ font-size:var(--fs-h1); line-height:1.05; font-weight:700; margin:0 0 18px; color:var(--white); }
-h2.h2{ font-size:var(--fs-h2); line-height:1.12; font-weight:700; margin:0 0 14px; color:var(--white); }
+h1.h1{ font-size:var(--fs-h1); line-height:1.05; font-weight:700; margin:0 0 18px; color:var(--white); text-align:center; }
+h2.h2{ font-size:var(--fs-h2); line-height:1.12; font-weight:700; margin:0 0 14px; color:var(--white); text-align:center; }
 h3.h3{ font-size:var(--fs-h3); font-weight:650; margin:0 0 8px; color:var(--white); }
-p.lead{ font-size:var(--fs-lead); color:var(--muted); max-width:64ch; line-height:1.55; margin:0 0 8px; }
+p.lead{ font-size:var(--fs-lead); color:var(--muted); max-width:64ch; line-height:1.55; margin:0 auto 8px; text-align:center; }
 p.body, li.body{ font-size:var(--fs-body); color:var(--ink); line-height:1.6; }
+.slide-head{ width:100%; max-width:900px; margin:0 auto clamp(18px,3vh,30px); display:flex; flex-direction:column; align-items:center; }
 .muted{ color:var(--muted); }
 .accent-blue{ color:var(--blue-light); }
 .accent-green{ color:var(--green-light); }
@@ -200,15 +201,28 @@ tbody tr:last-child td{ border-bottom:none; }
 .center-mid{ display:flex; flex-direction:column; justify-content:center; align-items:flex-start; height:100%; }
 
 /* ---------- title slide ---------- */
-#slide-cover{ padding-left:calc(var(--nav-w) + clamp(24px,4vw,64px)); align-items:flex-start; }
+#slide-cover{ padding-left:calc(var(--nav-w) + clamp(24px,4vw,64px)); align-items:center; text-align:center; }
+#slide-cover .content-wrap{ margin:0 auto; }
 .cover-badge{
   display:inline-flex; align-items:center; gap:10px; padding:8px 16px; border-radius:999px;
-  background:rgba(255,255,255,.06); border:1px solid var(--card-bd); font-size:var(--fs-small); color:var(--muted); margin-bottom:26px;
+  background:rgba(255,255,255,.06); border:1px solid var(--card-bd); font-size:var(--fs-small); color:var(--muted); margin:0 auto 26px;
 }
 .cover-badge b{ color:var(--green-light); }
-.cover-code{ font-family:'Sora',sans-serif; font-size:var(--fs-small); color:var(--muted-2); letter-spacing:.12em; margin-top:22px; }
-.cover-meta{ display:flex; gap:28px; flex-wrap:wrap; margin-top:36px; }
-.cover-meta div{ font-size:var(--fs-small); color:var(--muted); }
+.cover-code{ font-family:'Sora',sans-serif; font-size:var(--fs-small); color:var(--muted-2); letter-spacing:.12em; margin:22px auto 0; text-align:center; }
+.cover-author{
+  display:flex; align-items:center; gap:12px; margin:18px auto 0; padding:10px 20px 10px 16px;
+  border:1px solid var(--card-bd); border-radius:999px; background:rgba(255,255,255,.05); width:fit-content;
+}
+.cover-author::before{
+  content:"✍"; width:30px; height:30px; border-radius:50%; flex-shrink:0;
+  background:linear-gradient(135deg,var(--blue),var(--green)); color:#fff; font-size:.85rem;
+  display:flex; align-items:center; justify-content:center;
+}
+.cover-author-name{ font-family:'Sora',sans-serif; font-weight:700; color:var(--white); font-size:var(--fs-body); }
+.cover-author-role{ font-size:var(--fs-small); color:var(--muted); position:relative; padding-left:12px; }
+.cover-author-role::before{ content:"·"; position:absolute; left:0; color:var(--green-light); }
+.cover-meta{ display:flex; gap:28px; flex-wrap:wrap; margin:36px auto 0; justify-content:center; }
+.cover-meta div{ font-size:var(--fs-small); color:var(--muted); text-align:center; }
 .cover-meta b{ display:block; color:var(--white); font-family:'Sora',sans-serif; font-size:1rem; margin-bottom:2px; }
 
 /* ---------- side nav ---------- */
@@ -293,6 +307,10 @@ tbody tr:last-child td{ border-bottom:none; }
     <h1 class="h1 reveal r-d1">Vận hành máy Đánh phá đống (S/R)<br>&amp; Quản lý Kho than</h1>
     <p class="lead reveal r-d2">Tài liệu huấn luyện tổng hợp phục vụ đào tạo, ôn thi sát hạch và nâng cao tay nghề cho Vận hành viên cương vị Đánh phá đống (ĐPĐ), Máy tính điều khiển (MTĐK) và Trưởng ca/Trưởng kíp Phân xưởng Nhiên liệu.</p>
     <div class="cover-code reveal r-d3">TỔNG HỢP TỪ QT.SH1-NL.04 (Lần ban hành 03) &amp; QT.SH1-NL.05 (Lần ban hành 03) — Tháng 05/2026</div>
+    <div class="cover-author reveal r-d3">
+      <span class="cover-author-name">Lê Trí Linh</span>
+      <span class="cover-author-role">Trưởng kíp — Người hướng dẫn &amp; biên soạn</span>
+    </div>
     <div class="cover-meta reveal r-d4">
       <div><b>STR 1700/850.37 SWVK</b>Kiểu thiết bị máy S/R</div>
       <div><b>372.814 tấn</b>Tổng sức chứa kho than</div>
